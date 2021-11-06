@@ -525,12 +525,12 @@ class Compare:
         report = render("header.txt")
         df_header = pd.DataFrame(
             {
-                "DataFrame": [self.df1_name, self.df2_name],
-                "Columns": [self.df1.shape[1], self.df2.shape[1]],
-                "Rows": [self.df1.shape[0], self.df2.shape[0]],
+                "源": [self.df1_name, self.df2_name],
+                "列": [self.df1.shape[1], self.df2.shape[1]],
+                "行": [self.df1.shape[0], self.df2.shape[0]],
             }
         )
-        report += df_header[["DataFrame", "Columns", "Rows"]].to_string()
+        report += df_header[["源", "列", "行"]].to_string()
         report += "\n\n"
 
         # Column Summary
@@ -560,8 +560,8 @@ class Compare:
             self.count_matching_rows(),
             self.df1_name,
             self.df2_name,
-            "Yes" if self._any_dupes else "No",
-        )
+            "是" if self._any_dupes else "否",
+            )
 
         # Column Matching
         cnt_intersect = self.intersect_rows.shape[0]
@@ -580,12 +580,12 @@ class Compare:
                 any_mismatch = True
                 match_stats.append(
                     {
-                        "Column": column["column"],
+                        "列": column["column"],
                         "{} dtype".format(self.df1_name): column["dtype1"],
                         "{} dtype".format(self.df2_name): column["dtype2"],
-                        "# Unequal": column["unequal_cnt"],
-                        "Max Diff": column["max_diff"],
-                        "# Null Diff": column["null_diff"],
+                        "≠": column["unequal_cnt"],
+                        "max diff": column["max_diff"],
+                        "null diff": column["null_diff"],
                     }
                 )
                 if column["unequal_cnt"] > 0:
@@ -596,26 +596,28 @@ class Compare:
                     )
 
         if any_mismatch:
-            report += "Columns with Unequal Values or Types\n"
+            report += "------------------------------------\n"
+            report += "值或类型不相等的列\n"
             report += "------------------------------------\n"
             report += "\n"
             df_match_stats = pd.DataFrame(match_stats)
-            df_match_stats.sort_values("Column", inplace=True)
+            df_match_stats.sort_values("列", inplace=True)
             # Have to specify again for sorting
             report += df_match_stats[
                 [
-                    "Column",
+                    "列",
                     "{} dtype".format(self.df1_name),
                     "{} dtype".format(self.df2_name),
-                    "# Unequal",
-                    "Max Diff",
-                    "# Null Diff",
+                    "≠",
+                    "max diff",
+                    "null diff",
                 ]
             ].to_string()
             report += "\n\n"
 
             if sample_count > 0:
-                report += "Sample Rows with Unequal Values\n"
+                report += "-------------------------------\n"
+                report += "匹配上了，但值不相等样本\n"
                 report += "-------------------------------\n"
                 report += "\n"
                 for sample in match_sample:
@@ -623,7 +625,8 @@ class Compare:
                     report += "\n\n"
 
         if min(sample_count, self.df1_unq_rows.shape[0]) > 0:
-            report += "Sample Rows Only in {} (First {} Columns)\n".format(
+            report += "-----------------------------------------\n"
+            report += "没匹配上，{} 中仅有的行 (前 {} 列)\n".format(
                 self.df1_name, column_count
             )
             report += "---------------------------------------{}\n".format(
@@ -636,7 +639,8 @@ class Compare:
             report += "\n\n"
 
         if min(sample_count, self.df2_unq_rows.shape[0]) > 0:
-            report += "Sample Rows Only in {} (First {} Columns)\n".format(
+            report += "-----------------------------------------\n"
+            report += "没匹配上，{} 中仅有的行 (前 {} 列)\n".format(
                 self.df2_name, column_count
             )
             report += "---------------------------------------{}\n".format(

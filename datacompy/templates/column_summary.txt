@@ -1,7 +1,8 @@
-Column Summary
+--------------
+列概览
 --------------
 
-Number of columns in common: {0}
-Number of columns in {3} but not in {4}: {1}
-Number of columns in {4} but not in {3}: {2}
+共有的列数: {0}
+{3} 有，但 {4} 没有的列数: {1}
+{4} 有，但 {3} 没有的列数: {2}
 

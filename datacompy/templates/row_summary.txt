@@ -1,14 +1,15 @@
-Row Summary
+-----------
+行概览
 -----------
 
-Matched on: {0}
-Any duplicates on match values: {10}
-Absolute Tolerance: {1}
-Relative Tolerance: {2}
-Number of rows in common: {3:,}
-Number of rows in {8} but not in {9}: {4:,}
-Number of rows in {9} but not in {8}: {5:,}
+匹配上的列: {0}
+匹配上的列中是否有重复的行: {10}
+绝对容错率: {1}
+相对容错率: {2}
+共有的行数: {3:,}
+{8} 有，但 {9} 没有的行数: {4:,}
+{9} 有，但 {8} 没有的行数: {5:,}
 
-Number of rows with some compared columns unequal: {6:,}
-Number of rows with all compared columns equal: {7:,}
+匹配上了，但列值不相等的行数: {6:,}
+匹配上了，且列值相等的行数: {7:,}
 

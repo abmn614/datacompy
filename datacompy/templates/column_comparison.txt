@@ -1,7 +1,8 @@
-Column Comparison
+-----------------
+列比较
 -----------------
 
-Number of columns compared with some values unequal: {0:,}
-Number of columns compared with all values equal: {1:,}
-Total number of values which compare unequal: {2:,}
+匹配上了，但值不等的列数: {0:,}
+匹配上了，且值都相等时的列数: {1:,}
+匹配上了，但值不相等的个数: {2:,}
 
