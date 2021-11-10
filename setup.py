@@ -43,11 +43,11 @@ EXTRAS_REQUIRE["dev"] = (
 
 
 setup(
-    name="datacompy",
+    name="datacompy_abmn614",
     version=__version__,
     description="Dataframe comparison in Python",
     long_description=LONG_DESCRIPTION,
-    url="https://github.com/capitalone/datacompy",
+    url="https://github.com/abmn614/datacompy.git",
     license="Apache-2.0",
     packages=find_packages(),
     install_requires=INSTALL_REQUIRES,

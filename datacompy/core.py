@@ -504,7 +504,7 @@ class Compare:
         mm_bool = self.intersect_rows[match_list].all(axis="columns")
         return self.intersect_rows[~mm_bool][self.join_columns + return_list]
 
-    def report(self, sample_count=10, column_count=10):
+    def report(self, sample_count=10, column_count=10, to_str=True):
         """Returns a string representation of a report.  The representation can
         then be printed or saved to a file.
 
@@ -516,9 +516,13 @@ class Compare:
         column_count : int, optional
             The number of columns to display in the sample records output.  Defaults to 10.
 
+        to_str : bool, optional
+            default True, print str report.
+            if False, return a map of series dataFrame to format output
+
         Returns
         -------
-        str
+        str | map
             The report, formatted kinda nicely.
         """
         # Header
@@ -572,22 +576,23 @@ class Compare:
             sum([col["unequal_cnt"] for col in self.column_stats]),
         )
 
+        summary = report
+
         match_stats = []
         match_sample = []
         any_mismatch = False
         for column in self.column_stats:
             if not column["all_match"]:
                 any_mismatch = True
-                match_stats.append(
-                    {
-                        "列": column["column"],
-                        "{} dtype".format(self.df1_name): column["dtype1"],
-                        "{} dtype".format(self.df2_name): column["dtype2"],
-                        "≠": column["unequal_cnt"],
-                        "max diff": column["max_diff"],
-                        "null diff": column["null_diff"],
-                    }
-                )
+                match_stats_column_map = {
+                    "列": column["column"],
+                    "{} dtype".format(self.df1_name): column["dtype1"],
+                    "{} dtype".format(self.df2_name): column["dtype2"],
+                    "≠": column["unequal_cnt"],
+                    "max diff": column["max_diff"],
+                    "null diff": column["null_diff"],
+                }
+                match_stats.append(match_stats_column_map)
                 if column["unequal_cnt"] > 0:
                     match_sample.append(
                         self.sample_mismatch(
@@ -603,16 +608,15 @@ class Compare:
             df_match_stats = pd.DataFrame(match_stats)
             df_match_stats.sort_values("列", inplace=True)
             # Have to specify again for sorting
-            report += df_match_stats[
-                [
-                    "列",
-                    "{} dtype".format(self.df1_name),
-                    "{} dtype".format(self.df2_name),
-                    "≠",
-                    "max diff",
-                    "null diff",
-                ]
-            ].to_string()
+            match_stats_column_list = [
+                "列",
+                "{} dtype".format(self.df1_name),
+                "{} dtype".format(self.df2_name),
+                "≠",
+                "max diff",
+                "null diff",
+            ]
+            report += df_match_stats[match_stats_column_list].to_string()
             report += "\n\n"
 
             if sample_count > 0:
@@ -624,6 +628,7 @@ class Compare:
                     report += sample.to_string()
                     report += "\n\n"
 
+        df1_uniq_columns = []
         if min(sample_count, self.df1_unq_rows.shape[0]) > 0:
             report += "-----------------------------------------\n"
             report += "没匹配上，{} 中仅有的行 (前 {} 列)\n".format(
@@ -634,10 +639,12 @@ class Compare:
             )
             report += "\n"
             columns = self.df1_unq_rows.columns[:column_count]
+            df1_uniq_columns = columns
             unq_count = min(sample_count, self.df1_unq_rows.shape[0])
             report += self.df1_unq_rows.sample(unq_count)[columns].to_string()
             report += "\n\n"
 
+        df2_uniq_columns = []
         if min(sample_count, self.df2_unq_rows.shape[0]) > 0:
             report += "-----------------------------------------\n"
             report += "没匹配上，{} 中仅有的行 (前 {} 列)\n".format(
@@ -648,11 +655,24 @@ class Compare:
             )
             report += "\n"
             columns = self.df2_unq_rows.columns[:column_count]
+            df2_uniq_columns = columns
             unq_count = min(sample_count, self.df2_unq_rows.shape[0])
             report += self.df2_unq_rows.sample(unq_count)[columns].to_string()
             report += "\n\n"
 
-        return report
+        if to_str:
+            return report
+        else:
+            return {
+                'summary': summary,
+                'match_stats': match_stats,
+                'match_stats_column_list': match_stats_column_list,
+                'match_samples': match_sample,
+                'df1_unq_columns': df1_uniq_columns,
+                'df2_unq_columns': df2_uniq_columns,
+                'df1_unq_rows': self.df1_unq_rows,
+                'df2_unq_rows': self.df2_unq_rows,
+            }
 
 
 def render(filename, *fields):
