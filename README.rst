@@ -18,7 +18,7 @@ Quick Installation
 
 ::
 
-    pip install datacompy
+    pip install datacompy-abmn614
 
 Pandas Detail
 =============

@@ -693,7 +693,7 @@ def render(filename, *fields):
         The fully rendered out file.
     """
     this_dir = os.path.dirname(os.path.realpath(__file__))
-    with open(os.path.join(this_dir, "templates", filename)) as file_open:
+    with open(os.path.join(this_dir, "templates", filename), encoding='utf-8') as file_open:
         return file_open.read().format(*fields)
 
 
