@@ -600,6 +600,7 @@ class Compare:
                         )
                     )
 
+        match_stats_column_list = []
         if any_mismatch:
             report += "------------------------------------\n"
             report += "值或类型不相等的列\n"
